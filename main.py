@@ -8,16 +8,14 @@ openai.api_key = config.api_key
 messages = [{"role": "system", 
             "content": "sos un data engineer experto en python"}]
 
-def send_request(request, modelo):
-    response = openai.Completion.create(
-        engine=model,
-        prompt=request,
-        temperature=0
-    )
-    return response.choices[0].text.strip()
+while True:
 
-# Ejemplo de interacción con ChatGPT
-request = "como unir django con react?"
-model = "gpt-3.5-turbo" # Reemplaza esto con el modelo de OpenAI que deseas usar
-response = send_request(request, model)
-print(response, choices[0].message.content)
+    content = input("Sobre qué quieres hablar?")
+
+    if content == "exit":
+        break
+
+    messages.append({"role": "user", "content": content})
+
+    response = openai.ChatCompletion.crgiteate(model="gpt-3.5-turbo", messages=messages)
+
