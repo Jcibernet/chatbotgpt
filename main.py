@@ -1,21 +1,36 @@
 import openai
+
 import config
 
 
 openai.api_key = config.api_key
+model = "text-davinci-002"
 
-#Context of the role of chatgpt
-messages = [{"role": "system", 
-            "content": "sos un data engineer experto en python"}]
+context = [
+    {"role": "system", "content": "Bienvenido a ChatGPT. ¿En qué puedo ayudarte?"}
+]
 
-while True:
+def chat_with_gpt(prompt):
+    context.append({"role": "user", "content": prompt})
 
-    content = input("Sobre qué quieres hablar?")
+    response = openai.Completion.create(
+        engine=model,
+        prompt="\n".join([f"{message['role']}: {message['content']}" for message in context]),
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5
+    )
 
-    if content == "exit":
-        break
+    message = response.choices[0].text.strip()
+    context.append({"role": "system", "content": message})
 
-    messages.append({"role": "user", "content": content})
+    return message
 
-    response = openai.ChatCompletion.crgiteate(model="gpt-3.5-turbo", messages=messages)
-
+if __name__ == "__main__":
+    while True:
+        prompt = input("What do you want to know (or 'exit' to finish the query): ")
+        if prompt.lower() == "exit":
+            break
+        response = chat_with_gpt(prompt)
+        print(f"ChatGPT: {response}")
